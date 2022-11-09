@@ -1,5 +1,5 @@
 const fsProm = require('fs/promises');
-//const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 
 async function start() {
@@ -19,15 +19,13 @@ async function start() {
         await fsProm.readFile(
           path.join(__dirname, 'styles', file),
           'utf-8',
-          async (err, data) => {
-            if (err) throw err;
+          (err, data) => {
             console.log(data)
-            await fsProm.appendFile(
+            fs.appendFile(
               path.join(__dirname, 'project-dist', 'bundle.css'),
               data,
               (err) => {
                 if (err) throw err;
-                console.log('');
               }
             );
           }
