@@ -16,20 +16,17 @@ async function start() {
     
     files.forEach(async file => {
       if (path.extname(file) === ".css"){
-        await fsProm.readFile(
-          path.join(__dirname, 'styles', file),
-          'utf-8',
-          (err, data) => {
-            console.log(data)
-            fs.appendFile(
-              path.join(__dirname, 'project-dist', 'bundle.css'),
-              data,
-              (err) => {
-                if (err) throw err;
-              }
-            );
-          }
-        )
+        const read = fs.createReadStream(path.join(__dirname, 'styles', file), "utf-8");
+        
+        read.on("data", data => {
+          fs.appendFile(
+            path.join(__dirname, 'project-dist', 'bundle.css'),
+            data,
+            (err) => {
+              if (err) throw err;
+            }
+          );
+        })
       }
     })
   } catch (err) {
