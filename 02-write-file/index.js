@@ -29,4 +29,7 @@ stdin.on('data', data => {
   }
 });
 
-process.on('exit', () => stdout.write('Exiting the process. Bye!'));
+process.on('exit', () => console.log('\nExiting the process. Bye!'));
+process.on('SIGINT', () => {
+  process.exit(0);
+});
