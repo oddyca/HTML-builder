@@ -34,27 +34,25 @@ async function start(){try {
   })
 
   // copy template.html to /project-dist and replace placeholder tags with content from corresponding files at /components dir
-  const components = await fsProm.readdir(path.join(__dirname, 'components'));
   await fsProm.writeFile(
     __dirname + '/project-dist/' + 'template.html', 
     fs.createReadStream(path.join(__dirname, 'template.html'), "utf-8"), 
     (err) => {
       if (err) throw err;
-    })
-
-    components.forEach(async html => {
-    let info = await fsProm.stat(path.join(__dirname, 'components', html));
-    if (info.isFile() && path.extname(html) === ".html"){
-      let templateCopy = (await fsProm.readFile(path.join(__dirname, "project-dist", 'template.html'))).toString();
-      fs.readFile(path.join(__dirname, "components", html), function(err, data) {
-        if (err) throw err;
-        templateCopy = templateCopy.replace(`{{${path.parse(html).name}}}`, data);
-        fs.writeFile(__dirname + '/project-dist/' + 'template.html', templateCopy, function (err) {
-          if (err) throw err;
-        });}
-        );    
-      }
     });
+
+  const components = await fsProm.readdir(path.join(__dirname, "components"));
+  let template = await fsProm.readFile(path.join(__dirname, 'template.html'));
+  let templateCopy = `...${template.toString()}`
+
+  for (html of components) {
+    let info = await fsProm.stat(path.join(__dirname, 'components', html));
+    let htmlCode = await fsProm.readFile(path.join(__dirname, 'components', html));
+    if (info.isFile() && path.extname(html) === ".html"){
+      templateCopy = templateCopy.replace(`{{${path.parse(html).name}}}`, htmlCode.toString());
+      }
+  };
+  await fsProm.writeFile(__dirname + '/project-dist/' + 'template.html', templateCopy);
   
   // copy assets
   async function copyAssets(origin, target)  {
