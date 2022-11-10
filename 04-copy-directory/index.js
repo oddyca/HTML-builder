@@ -4,8 +4,6 @@ const path = require('path');
 async function start(){
   try {
     const isCopied = await fsPromise.readdir(path.join(__dirname));
-    console.log(isCopied)
-
     if (!isCopied.includes("files-copy")) {
       await fsPromise.mkdir(__dirname + '/files-copy/', { recursive: true });
       const files = await fsPromise.readdir(path.join(__dirname, 'files'));
